@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Container, Typography, Box, Alert } from '@mui/material';
 import { jobService } from '../services';
+import { API_BASE_URL } from '../services/api';
 
 const TestPage = () => {
   const [result, setResult] = useState(null);
@@ -28,7 +29,7 @@ const TestPage = () => {
     setResult(null);
     
     try {
-      const response = await fetch('http://localhost:5000/api/jobs');
+      const response = await fetch(`${API_BASE_URL}/jobs`);
       const data = await response.json();
       setResult(JSON.stringify(data, null, 2));
     } catch (err) {

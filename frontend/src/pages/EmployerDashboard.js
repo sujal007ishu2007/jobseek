@@ -37,7 +37,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { jobService, applicationService } from '../services';
+import { jobService } from '../services';
 
 const EmployerDashboard = () => {
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ const EmployerDashboard = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [applicationsDialogOpen, setApplicationsDialogOpen] = useState(false);
   const [selectedJobApplications, setSelectedJobApplications] = useState([]);
-  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [applicationsLoading] = useState(false);
   const [stats, setStats] = useState({
     totalJobs: 0,
     activeJobs: 0,

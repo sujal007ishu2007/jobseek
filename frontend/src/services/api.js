@@ -37,3 +37,6 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+// Also export the base URL for diagnostics and non-axios consumers
+export { API_BASE_URL };
