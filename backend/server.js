@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 
 // Load environment variables
 dotenv.config();
@@ -17,12 +18,14 @@ const defaultAllowedOrigins = [
 
 // FRONTEND_URL supports a single origin; CORS_ORIGINS can be a comma-separated list
 const envAllowed = [];
-if (process.env.FRONTEND_URL) envAllowed.push(process.env.FRONTEND_URL.trim());
+// Normalize origins by trimming and removing trailing slashes
+const normalizeOrigin = (s) => s.trim().replace(/\/+$/, '');
+if (process.env.FRONTEND_URL) envAllowed.push(normalizeOrigin(process.env.FRONTEND_URL));
 if (process.env.CORS_ORIGINS) {
   envAllowed.push(
     ...process.env.CORS_ORIGINS
       .split(',')
-      .map((s) => s.trim())
+      .map((s) => normalizeOrigin(s))
       .filter(Boolean)
   );
 }
@@ -78,17 +81,32 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/applications', require('./routes/applications'));
 
-// Serve static files from React app in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
-  });
-} else {
-  // Basic route for development
+// Serve static files from React app only if explicitly enabled and build exists
+const candidateClientDirs = [
+  path.join(__dirname, '../frontend/build'),
+  path.join(__dirname, '../client/build'),
+];
+
+let servedClient = false;
+if (process.env.SERVE_CLIENT === 'true') {
+  for (const dir of candidateClientDirs) {
+    const indexPath = path.join(dir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      app.use(express.static(dir));
+      app.get('*', (req, res) => {
+        res.sendFile(indexPath);
+      });
+      servedClient = true;
+      console.log('[Static] Serving client from', dir);
+      break;
+    }
+  }
+}
+
+// Fallback basic route
+if (!servedClient) {
   app.get('/', (req, res) => {
-    res.json({ message: 'Job Management API is running!' });
+    res.json({ message: 'Job Management API is running!', servedClient });
   });
 }
 
