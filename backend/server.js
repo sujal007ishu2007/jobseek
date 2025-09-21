@@ -14,7 +14,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000', 
     'http://127.0.0.1:3000',
-    process.env.FRONTEND_URL || 'https://your-vercel-app.vercel.app'
+    'https://jobseek-jfzv.vercel.app',
+    process.env.FRONTEND_URL
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
