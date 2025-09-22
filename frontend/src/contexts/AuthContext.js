@@ -81,7 +81,11 @@ export const AuthProvider = ({ children }) => {
       });
       return data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
+      const message =
+        error.response?.data?.message ||
+        (Array.isArray(error.response?.data?.errors) && error.response.data.errors[0]?.msg) ||
+        error.message ||
+        'Login failed';
       dispatch({ type: 'SET_ERROR', payload: message });
       throw error;
     }
@@ -98,7 +102,11 @@ export const AuthProvider = ({ children }) => {
       });
       return data;
     } catch (error) {
-      const message = error.response?.data?.message || 'Registration failed';
+      const message =
+        error.response?.data?.message ||
+        (Array.isArray(error.response?.data?.errors) && error.response.data.errors[0]?.msg) ||
+        error.message ||
+        'Registration failed';
       dispatch({ type: 'SET_ERROR', payload: message });
       throw error;
     }
@@ -116,7 +124,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       return updatedUser;
     } catch (error) {
-      const message = error.response?.data?.message || 'Profile update failed';
+      const message =
+        error.response?.data?.message ||
+        (Array.isArray(error.response?.data?.errors) && error.response.data.errors[0]?.msg) ||
+        error.message ||
+        'Profile update failed';
       dispatch({ type: 'SET_ERROR', payload: message });
       throw error;
     }

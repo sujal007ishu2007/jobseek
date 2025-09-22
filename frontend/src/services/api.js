@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// Normalize base URL to always include a single '/api' suffix
+const RAW_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const STRIPPED = RAW_BASE.replace(/\/+$/, '');
+const API_BASE_URL = STRIPPED.endsWith('/api') ? STRIPPED : `${STRIPPED}/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
