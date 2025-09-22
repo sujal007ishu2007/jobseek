@@ -39,6 +39,22 @@ const TestPage = () => {
     }
   };
 
+  const testHealth = async () => {
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/health`);
+      const data = await response.json();
+      setResult(JSON.stringify(data, null, 2));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Container maxWidth="md">
       <Typography variant="h4" gutterBottom sx={{ mt: 2 }}>
@@ -46,6 +62,9 @@ const TestPage = () => {
       </Typography>
       
       <Box sx={{ mt: 2, mb: 2 }}>
+        <Alert severity="info" sx={{ mb: 2 }}>
+          Using API Base URL: <strong>{API_BASE_URL}</strong>
+        </Alert>
         <Button 
           variant="contained" 
           onClick={testGetJobs} 
@@ -59,8 +78,18 @@ const TestPage = () => {
           variant="outlined" 
           onClick={testApiDirect} 
           disabled={loading}
+          sx={{ mr: 2 }}
         >
           Test Direct API
+        </Button>
+
+        <Button 
+          variant="outlined" 
+          color="secondary"
+          onClick={testHealth} 
+          disabled={loading}
+        >
+          Test /api/health
         </Button>
       </Box>
 
